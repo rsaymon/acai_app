@@ -42,5 +42,5 @@ class CreatePedidoService {
         return pedido;
     }
 }
-//mudando token
+
 export default CreatePedidoService;

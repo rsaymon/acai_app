@@ -3,6 +3,7 @@ import User from '../models/User';
 import UsersRepository from '../repositories/UsersRepository';
 import { getCustomRepository } from 'typeorm'
 
+import { hash } from 'bcryptjs'
 
 interface Request {
     name: string,
@@ -24,12 +25,13 @@ class CreateUserService {
             throw new Error ('Email já cadastrado!');
         }
 
+        const hashPassword = await hash(password, 8);
 
         //criação do usuário
         const user = usersRepository.create({
             name,
             email,
-            password,
+            password:hashPassword,
         });
 
         await usersRepository.save(user);
