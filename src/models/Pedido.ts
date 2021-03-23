@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn} from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm'
+import User from './User';
 
 
 //decorator entity informa que vai ser passada a informação da classe PEDIDO para o banco.
@@ -11,6 +12,19 @@ class Pedido {
     @Column('text')
     requester_id: string;
 
+    /**
+     * Um USER tem UM relacionamento
+     * Um USER para MUITOS relacionamentos [x]
+     * Muitos USERS para MUITOS relacionamentos
+     */
+
+    //Estou dentro de PEDIDOS, ENTÃO -> Muitos pedidos para 1 usuário
+    //Função que vai retornar qual model deve utilizar (USER).
+    //JoinColumn -> qual que é a coluna que vai identificar o usuário que faz o pedido.
+    @ManyToOne(() => User)
+    @JoinColumn({name:'requester_id'})
+    requester: User;
+
     @Column('text')
     peso: string;
 
@@ -22,7 +36,7 @@ class Pedido {
 
     @CreateDateColumn()
     created_at: Date;
-    
+
     @UpdateDateColumn()
     updated_at: Date;
 

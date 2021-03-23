@@ -17,7 +17,7 @@ pedidosRouter.get('/', async (request, response) => {
 });
 
 
-pedidosRouter.post('/', async (request, response, next) => {
+pedidosRouter.post('/', async (request, response) => {
     try {
         const { requester_id, peso, adicionais, dataPedido } = request.body;
 

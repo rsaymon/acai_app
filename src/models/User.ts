@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 //decorator entity informa que vai ser passada a informação da classe PEDIDO para o banco.
 //é preciso informar O QUE É COLUNA DO BANCO ou não.
-@Entity('user')
+@Entity('users')
 class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
