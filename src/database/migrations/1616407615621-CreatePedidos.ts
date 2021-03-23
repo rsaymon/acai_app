@@ -30,7 +30,8 @@ export default class CreatePedidos1616407615621 implements MigrationInterface {
                     },
                     {
                         name: 'requester_id',
-                        type: 'varchar',
+                        type: 'uuid',
+                        isNullable: true,
                     },
                     {
                         name: 'peso',
