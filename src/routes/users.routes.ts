@@ -1,11 +1,16 @@
 import { Router } from 'express';
 import UsersRepository from '../repositories/UsersRepository';
 import { getCustomRepository } from 'typeorm'
+import multer from 'multer';
 
+import uploadConfig from '../config/upload'
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import CreateUserService from '../services/CreateUserService';
+import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
 
 const usersRouter = Router();
-//informando que pedidos é do tipo PEDIDO definido acima    
+
+const upload = multer(uploadConfig);
 
 
 usersRouter.get('/', async (request, response) => {
@@ -27,11 +32,43 @@ usersRouter.post('/', async (request, response) => {
             email,
             password,
         });
-        
-        //@ts-expect-error Aqui vai ocorrer um erro por o delete ser opcional, mas estou ignorando
-        delete user.password;
 
-        return response.json(user);
+        const userWithoutPassword = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+        };
+
+        return response.json(userWithoutPassword);
+    } catch (err) {
+        return response.status(400).json({ error: err.message });
+    }
+});
+
+//put - atualiza informação por completa, podendo editar tudo
+//patch - alterar único campo
+usersRouter.patch('/avatar', ensureAuthenticated, upload.single('avatar'), async (request, response) => {
+    try {
+        const updateUserAvatarService = new UpdateUserAvatarService;
+        const user = await updateUserAvatarService.execute({
+            user_id: request.user.id,
+            avatarFileName: request.file.filename
+        })
+        
+        //copiando usuário sem password, para que não seja exibido
+        const userWithoutPassword = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+        };
+
+        return response.json(userWithoutPassword);
+
     } catch (err) {
         return response.status(400).json({ error: err.message });
     }

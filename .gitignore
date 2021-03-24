@@ -1,2 +1,7 @@
 node_modules
 filesHELP
+temp/
+
+# ignore os arquivos da pasta tmp, menos a pasta e o arquivo gitkeep.
+tmp/*
+!tmp/.gitkeep

@@ -16,12 +16,17 @@ class User {
 
     @Column('text')
     password: string;
+    
+    @Column('text')
+    avatar: string;
 
     @CreateDateColumn()
     created_at: Date;
     
     @UpdateDateColumn()
     updated_at: Date;
+
+    
     
     //construtor que vai criar omitindo o ID, pois é gerado dinamicamente pela lib uuid
     //COM O BANCO, É CRIADO DE FORMA AUTOMATICA! Não precisa do construtor.
