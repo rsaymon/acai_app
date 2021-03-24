@@ -12,13 +12,15 @@ sessionsRouter.post('/', async (request, response) => {
         const createSession = new SessionService();
 
         //execute ta retornando void
-        const { user } = await createSession.execute({
+        const { user, token } = await createSession.execute({
             email,
             password,
         });
 
+        //@ts-expect-error Aqui vai ocorrer um erro por o delete ser opcional, mas estou ignorando
+        delete user.password;
 
-        return response.json( {user} );
+        return response.json({ user, token });
     } catch (err) {
         return response.status(400).json({ error: err.message });
     }

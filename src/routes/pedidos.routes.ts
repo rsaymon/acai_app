@@ -1,13 +1,16 @@
 import { Router } from 'express';
 import { parseISO } from 'date-fns';
-
-import PedidosRepository from '../repositories/PedidosRepository';
 import { getCustomRepository } from 'typeorm'
 
+import PedidosRepository from '../repositories/PedidosRepository';
 import CreatePedidoService from '../services/CreatePedidoService';
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 const pedidosRouter = Router();
-//informando que pedidos é do tipo PEDIDO definido acima    
+
+//usando o middleware de autenticação em todas as rotas de pedidos.
+//Caso quisesse usar só em uma rota, colocar antes do async, dentro do método
+pedidosRouter.use(ensureAuthenticated);
 
 pedidosRouter.get('/', async (request, response) => {
     const pedidosRepository = getCustomRepository(PedidosRepository);

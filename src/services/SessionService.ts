@@ -1,9 +1,11 @@
 import User from '../models/User';
-
 import UsersRepository from '../repositories/UsersRepository';
-import { getCustomRepository } from 'typeorm'
 
-import { compare, hash } from 'bcryptjs'
+import authConfig from '../config/auth';
+
+import { getCustomRepository } from 'typeorm';
+import { compare } from 'bcryptjs';
+import { sign } from 'jsonwebtoken';
 
 interface Request {
     email: string,
@@ -12,6 +14,7 @@ interface Request {
 
 interface Response {
     user: User,
+    token: string,
 }
 
 class SessionService {
@@ -21,23 +24,35 @@ class SessionService {
         const usersRepository = getCustomRepository(UsersRepository);
         //verificando se o usuário inserido (email) existe
         const user = await usersRepository.findOne({
-            where: {email}
+            where: { email }
         });
 
         //verificando apenas email, mas aviso sobre email / senha para garantir segurança
-        if (!user){
-            throw new Error (' Combinação e-mail/senha incorreta!');
+        if (!user) {
+            throw new Error(' Combinação e-mail/senha incorreta!');
         }
 
         //password é a senha que tentou login. user.password é a senha cadastrada no banco.
         const passwordVerification = await compare(password, user.password);
-        
-        if (!passwordVerification){
-            throw new Error (' Combinação e-mail/senha incorreta!');
+
+        if (!passwordVerification) {
+            throw new Error(' Combinação e-mail/senha incorreta!');
         }
         //Se passar daqui, usuário autenticado!
-        
-        return {user};
+        //hash gerada aleatoriamente no md5
+        //primeiro parâmetro: PAYLOAD -> Informações que não serão seguras, apenas informações extras
+        //segundo: hash chave de segurança
+        //terceiro: configurações do token
+        //subject: id do usuário que gerou o token
+        //expiresIn: expira o token em 1 dia
+        const { secret, expiresIn } = authConfig.jwt;
+
+        const token = sign({}, secret, {
+            subject: user.id,
+            expiresIn,
+        });
+
+        return { user, token };
     }
 }
 
