@@ -21,21 +21,19 @@ pedidosRouter.get('/', async (request, response) => {
 
 
 pedidosRouter.post('/', async (request, response) => {
-    try {
-        const { requester_id, peso, adicionais, dataPedido } = request.body;
 
-        //converte a data para um tipo DATE do java.
-        const parsedDataPedido = parseISO(dataPedido);
+    const { requester_id, peso, adicionais, dataPedido } = request.body;
 
-        const createPedido = new CreatePedidoService();
+    //converte a data para um tipo DATE do java.
+    const parsedDataPedido = parseISO(dataPedido);
 
-        //chamando o serviço
-        const pedido = await createPedido.execute({ requester_id, peso, adicionais, dataPedido: parsedDataPedido });
+    const createPedido = new CreatePedidoService();
 
-        return response.json(pedido);
-    } catch (err){
-        return response.status(400).json({error: err.message});
-    }
+    //chamando o serviço
+    const pedido = await createPedido.execute({ requester_id, peso, adicionais, dataPedido: parsedDataPedido });
+
+    return response.json(pedido);
+
 });
 
 export default pedidosRouter;

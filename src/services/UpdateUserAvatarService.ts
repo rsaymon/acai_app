@@ -1,8 +1,10 @@
-import { getRepository } from 'typeorm';
 import User from '../models/User';
-import Path from 'path';
 import uploadConfig from '../config/upload';
+import AppError from '../errors/AppError';
+
 import fs from 'fs';
+import Path from 'path';
+import { getRepository } from 'typeorm';
 
 interface Request {
     user_id: string,
@@ -17,7 +19,7 @@ class UpdateUserAvatarService {
         const user = await usersRepository.findOne(user_id);
 
         if(!user){
-            throw new Error("Apenas usuários autenticados podem modificar seu avatar!")
+            throw new AppError("Apenas usuários autenticados podem modificar seu avatar!", 401)
         }
         //caso ja tenha avatar, deletar anterior
         if(user.avatar){

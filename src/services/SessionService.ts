@@ -1,5 +1,6 @@
 import User from '../models/User';
 import UsersRepository from '../repositories/UsersRepository';
+import AppError from '../errors/AppError';
 
 import authConfig from '../config/auth';
 
@@ -29,14 +30,14 @@ class SessionService {
 
         //verificando apenas email, mas aviso sobre email / senha para garantir segurança
         if (!user) {
-            throw new Error(' Combinação e-mail/senha incorreta!');
+            throw new AppError(' Combinação e-mail/senha incorreta!', 401);
         }
 
         //password é a senha que tentou login. user.password é a senha cadastrada no banco.
         const passwordVerification = await compare(password, user.password);
 
         if (!passwordVerification) {
-            throw new Error(' Combinação e-mail/senha incorreta!');
+            throw new AppError(' Combinação e-mail/senha incorreta!', 401);
         }
         //Se passar daqui, usuário autenticado!
         //hash gerada aleatoriamente no md5

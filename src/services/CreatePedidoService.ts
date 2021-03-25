@@ -1,4 +1,5 @@
 import Pedido from '../models/Pedido';
+import AppError from '../errors/AppError';
 
 import { startOfMinute } from 'date-fns';
 
@@ -26,7 +27,7 @@ class CreatePedidoService {
         const buscarPedidoNoMesmoMinuto = await pedidosRepository.buscarPorDataNoMesmoMinuto(dataPedidoSemSegundos);
 
         if (buscarPedidoNoMesmoMinuto) {
-            throw Error('Aguarde 1 minuto para realizar um novo pedido!');
+            throw new AppError('Aguarde 1 minuto para realizar um novo pedido!');
         }
 
         //criação do pedido

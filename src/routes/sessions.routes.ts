@@ -6,25 +6,23 @@ const sessionsRouter = Router();
 //informando que pedidos é do tipo PEDIDO definido acima    
 
 sessionsRouter.post('/', async (request, response) => {
-    try {
-        const { email, password } = request.body;
 
-        const createSession = new SessionService();
+    const { email, password } = request.body;
 
-        //execute ta retornando void
-        const { user, token } = await createSession.execute({
-            email,
-            password,
-        });
+    const createSession = new SessionService();
 
-        //@ts-expect-error Aqui vai ocorrer um erro por o delete ser opcional, mas estou ignorando
-        //para corrigir, criar copia do user sem o campo password para retornar.
-        delete user.password;
+    //execute ta retornando void
+    const { user, token } = await createSession.execute({
+        email,
+        password,
+    });
 
-        return response.json({ user, token });
-    } catch (err) {
-        return response.status(400).json({ error: err.message });
-    }
+    //@ts-expect-error Aqui vai ocorrer um erro por o delete ser opcional, mas estou ignorando
+    //para corrigir, criar copia do user sem o campo password para retornar.
+    delete user.password;
+
+    return response.json({ user, token });
+
 });
 
 

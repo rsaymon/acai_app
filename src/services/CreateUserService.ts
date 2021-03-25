@@ -1,4 +1,5 @@
 import User from '../models/User';
+import AppError from '../errors/AppError';
 
 import UsersRepository from '../repositories/UsersRepository';
 import { getCustomRepository } from 'typeorm'
@@ -22,7 +23,7 @@ class CreateUserService {
         });
 
         if (checkUserExists){
-            throw new Error ('Email já cadastrado!');
+            throw new AppError ('Email já cadastrado!', 400);
         }
 
         const hashPassword = await hash(password, 8);

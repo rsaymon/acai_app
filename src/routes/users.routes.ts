@@ -17,6 +17,11 @@ usersRouter.get('/', async (request, response) => {
     const usersRepository = getCustomRepository(UsersRepository);
     const users = await usersRepository.find();
 
+    //ocultando senha na listagem
+    for (let user of users) {
+        user.password = '';
+    }
+
     return response.json(users);
 });
 
@@ -43,35 +48,33 @@ usersRouter.post('/', async (request, response) => {
 
         return response.json(userWithoutPassword);
     } catch (err) {
-        return response.status(400).json({ error: err.message });
+        return response.status(err.statusCode).json({ error: err.message });
     }
 });
 
 //put - atualiza informação por completa, podendo editar tudo
 //patch - alterar único campo
 usersRouter.patch('/avatar', ensureAuthenticated, upload.single('avatar'), async (request, response) => {
-    try {
-        const updateUserAvatarService = new UpdateUserAvatarService;
-        const user = await updateUserAvatarService.execute({
-            user_id: request.user.id,
-            avatarFileName: request.file.filename
-        })
-        
-        //copiando usuário sem password, para que não seja exibido
-        const userWithoutPassword = {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            avatar: user.avatar,
-            created_at: user.created_at,
-            updated_at: user.updated_at,
-        };
 
-        return response.json(userWithoutPassword);
+    const updateUserAvatarService = new UpdateUserAvatarService;
+    const user = await updateUserAvatarService.execute({
+        user_id: request.user.id,
+        avatarFileName: request.file.filename
+    })
 
-    } catch (err) {
-        return response.status(400).json({ error: err.message });
-    }
+    //copiando usuário sem password, para que não seja exibido
+    const userWithoutPassword = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        created_at: user.created_at,
+        updated_at: user.updated_at,
+    };
+
+    return response.json(userWithoutPassword);
+
+
 });
 
 export default usersRouter;
